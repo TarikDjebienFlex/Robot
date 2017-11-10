@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   creationComplete="ecouteur.subscribe()">
+	<fx:Declarations>
+		<mx:Consumer id="ecouteur" destination="bougerrobot" message="receptionner(event.message)"/>
+		<mx:Producer id="emetteur" destination="bougerrobot"/>
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import mx.messaging.messages.AsyncMessage;
+			import mx.messaging.messages.IMessage;
+			
+			private function envoyer(direction:String):void
+			{
+				trace("envoyer("+direction+")");
+				var messageAsynchrone:IMessage = new AsyncMessage();
+				messageAsynchrone.body.chatMessage = direction;
+				trace(messageAsynchrone);
+				emetteur.send(messageAsynchrone);
+			}
+			
+			private function receptionner(messageDestination:IMessage):void
+			{
+				var directionRecue:String = messageDestination.body.chatMessage;
+				trace("directionRecue : "+directionRecue);
+				
+				switch(directionRecue){
+					case "G" : gauche();
+						break;
+					case "D" : droite();
+						break;
+					case "H" : haut();
+						break;
+					case "B" : bas();
+						break;
+				}
+			}
+			
+			public function gauche():void
+			{
+				trace("gauche()");
+				irobot.x = irobot.x - 20;
+			}
+			
+			public function droite():void
+			{
+				trace("droite()");
+				irobot.x = irobot.x + 20;
+			}
+			
+			public function haut():void
+			{
+				trace("haut()");
+				irobot.y = irobot.y - 20;
+			}
+			
+			public function bas():void
+			{
+				trace("bas()");
+				irobot.y = irobot.y + 20;
+			}
+		]]>
+	</fx:Script>
+	<s:Panel x="31" y="10" width="248" height="353" title="Robot BlazeDS">
+		
+		<!-- Matérialisation du robot -->
+		<s:Rect id="irobot" x="104" y="90" width="30" height="30">
+			<s:stroke>
+				<s:SolidColorStroke color="0x000000" weight="2"/>
+			</s:stroke>
+			<s:fill>
+				<s:RadialGradient>
+					<s:entries>
+						<s:GradientEntry color="0x0056FF" ratio="0.00" alpha="0.5" />
+					</s:entries>
+				</s:RadialGradient>
+			</s:fill>
+		</s:Rect>
+		
+		<!-- Boutons de direction -->
+		<s:Button x="82.5" y="218" label="Haut" width="70" id="btn_haut" click="envoyer('H')"/>
+		<s:Button x="82.5" y="263" label="Bas" width="70" id="btn_bas" click="envoyer('B')"/>
+		<s:Button x="153" y="241" label="Droite" width="70" id="btn_droite" click="envoyer('D')"/>
+		<s:Button x="10" y="241" label="Gauche" width="70" id="btn_gauche" click="envoyer('G')"/>
+		
+	</s:Panel>
+</s:WindowedApplication>
